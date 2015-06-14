@@ -35,15 +35,12 @@ mean(with(da, tapply(steps, date, sum)),na.rm=T)
 
 2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day.
 
-```{r}
-x11()
+```{r histograma,fig.height=4}
 hist(with(da, tapply(steps, date, sum))
      ,main="Histogram: Total number of steps taken each day"
      ,xlab="Number of Steps"
      ,col="gray"
      ,breaks=8)
-dev.copy(png,file="Hist1.png")
-dev.off()
 ```
 
 3. Calculate and report the mean and median of the total number of steps taken per day.

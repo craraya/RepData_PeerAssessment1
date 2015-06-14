@@ -34,7 +34,6 @@ mean(with(da, tapply(steps, date, sum)),na.rm=T)
 
 
 ```r
-x11()
 hist(with(da, tapply(steps, date, sum))
      ,main="Histogram: Total number of steps taken each day"
      ,xlab="Number of Steps"
@@ -42,25 +41,7 @@ hist(with(da, tapply(steps, date, sum))
      ,breaks=8)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
-
-```r
-dev.copy(png,file="Hist1.png")
-```
-
-```
-## png 
-##   4
-```
-
-```r
-dev.off()
-```
-
-```
-## png 
-##   2
-```
+![](PA1_template_files/figure-html/histograma-1.png) 
 
 3. Calculate and report the mean and median of the total number of steps taken per day.
 
@@ -91,7 +72,7 @@ qplot(x,y)
 ## Warning: Removed 8 rows containing missing values (geom_point).
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
 ## Imputing missing values
 If we imput missing values the mean of the values is NA:
