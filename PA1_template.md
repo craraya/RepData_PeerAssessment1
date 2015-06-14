@@ -34,6 +34,7 @@ mean(with(da, tapply(steps, date, sum)),na.rm=T)
 
 
 ```r
+x11()
 hist(with(da, tapply(steps, date, sum))
      ,main="Histogram: Total number of steps taken each day"
      ,xlab="Number of Steps"
@@ -42,6 +43,24 @@ hist(with(da, tapply(steps, date, sum))
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
+dev.copy(png,file="Hist1.png")
+```
+
+```
+## png 
+##   4
+```
+
+```r
+dev.off()
+```
+
+```
+## png 
+##   2
+```
 
 3. Calculate and report the mean and median of the total number of steps taken per day.
 
@@ -55,9 +74,10 @@ summary(with(da, tapply(steps, date, sum)))
 ##      41    8841   10760   10770   13290   21190       8
 ```
 
-
 ## What is the average daily activity pattern?
+
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
 
 ```r
 y<-with(da, tapply(steps, date, mean))
