@@ -12,9 +12,11 @@ da<-read.csv("activity.csv")
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 
 ```r
-library(ggplot2)
 da$date<-as.Date(da$date)
-datime<-as.POSIXlt(da$date)
+h<-trunc(da$interval/100)
+m<-da$interval-h*100
+time<-paste(h,m,sep=":")
+datime<-as.POSIXlt(paste(da$date,time,sep=" "))
 ```
 
 ## What is mean total number of steps taken per day?
@@ -64,18 +66,70 @@ summary(with(da, tapply(steps, date, sum)))
 y<-with(da, tapply(steps, date, mean))
 x<-with(da, tapply(date, date, max))
 x<-as.POSIXlt(names(x))
-##plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps")
-qplot(x,y)
+plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps",na.rm=T)
 ```
 
 ```
-## Warning: Removed 8 rows containing missing values (geom_point).
+## Warning in plot.window(...): "na.rm" is not a graphical parameter
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+```
+## Warning in plot.xy(xy, type, ...): "na.rm" is not a graphical parameter
+```
+
+```
+## Warning in axis(side, at = z, labels = labels, ...): "na.rm" is not a
+## graphical parameter
+```
+
+```
+## Warning in axis(side = side, at = at, labels = labels, ...): "na.rm" is
+## not a graphical parameter
+```
+
+```
+## Warning in box(...): "na.rm" is not a graphical parameter
+```
+
+```
+## Warning in title(...): "na.rm" is not a graphical parameter
+```
+
+![](PA1_template_files/figure-html/serie plot-1.png) 
+
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+
+```r
+max(da$steps,na.rm=T)
+```
+
+```
+## [1] 806
+```
+
+```r
+da[da$steps==806 && !is.na(da$steps),]
+```
+
+```
+## [1] steps    date     interval
+## <0 rows> (or 0-length row.names)
+```
+
 
 ## Imputing missing values
-If we imput missing values the mean of the values is NA:
+
+Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
+
+1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
 
 ```r
 mean(with(da, tapply(steps, date, sum)),na.rm=F)
