@@ -1,17 +1,18 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: 'Reproducible Research: Peer Assessment 1'
+output:
   html_document:
-    keep_md: true
+    keep_md: yes
+  pdf_document: default
 ---
 ## Loading and preprocessing the data
 Show any code that is needed to.
 
 1. Load the data.
 ```{r,echo=FALSE}
-#setwd("/media/caraya/DATA/CURSOS/02-Datascience/Reproducible_Research/RepData_PeerAssessment1")
-#getwd()
-#dir()
+setwd("/media/caraya/DATA/CURSOS/02-Datascience/Reproducible_Research/RepData_PeerAssessment1")
+getwd()
+dir()
 ##----------------------------------------------------------------------------
 ```
 ```{r}
@@ -56,17 +57,18 @@ summary(with(da, tapply(steps, date, sum)))
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```{r serie plot,fig.height=4}
+par(mfrow=c(1,1))
 y<-with(da, tapply(steps, date, mean))
 x<-with(da, tapply(date, date, max))
 x<-as.POSIXlt(names(x))
-plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps",na.rm=T)
+plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps")
 ```
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```{r}
-max(da$steps,na.rm=T)
-da[da$steps==806 && !is.na(da$steps),]
+m<-max(da$steps,na.rm=T)
+da[da$steps==m && !is.na(da$steps),]
 ```
 
 
@@ -75,6 +77,14 @@ da[da$steps==806 && !is.na(da$steps),]
 Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+The total number of missing values in the dataset is:
+
+```{r}
+length(da[is.na(da$steps),1])+
+length(da[is.na(da$date),1])+
+length(da[is.na(da$interval),1])
+```
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
@@ -90,7 +100,20 @@ mean(with(da, tapply(steps, date, sum)),na.rm=F)
 For that, we do:
 * Extract the week's days.
 ```{r}
-wd<-weekdays(da$date)
+da<-cbind(da,weekdays(da$date))
+colnames(da)<-c("steps","date","interval","weekday")
+y1<-with(da, tapply(steps[da$weekday %in% c("sábado","domingo")], date[da$weekday %in% c("sábado","domingo")], mean))
+x1<-with(da, tapply(date[da$weekday %in% c("sábado","domingo")], date[da$weekday %in% c("sábado","domingo")], max))
+x1<-as.POSIXlt(names(x1))
+
+y2<-with(da, tapply(steps[!da$weekday %in% c("sábado","domingo")], date[!da$weekday %in% c("sábado","domingo")], mean))
+x2<-with(da, tapply(date[!da$weekday %in% c("sábado","domingo")], date[!da$weekday %in% c("sábado","domingo")], max))
+x2<-as.POSIXlt(names(x2))
+
+par(mfrow=c(1,2))
+plot(x1,y1,main="Weekend Activity Pattern",type="l",xlab="date",ylab="steps")
+plot(x2,y2,main="Week Activity Pattern",type="l",xlab="date",ylab="steps")
 ```
 
+There is no difference between Weekend and day of week Activity Pattern.
 

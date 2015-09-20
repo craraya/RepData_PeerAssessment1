@@ -4,6 +4,16 @@ Show any code that is needed to.
 
 1. Load the data.
 
+```
+## [1] "/media/caraya/DATA/CURSOS/02-Datascience/Reproducible_Research/RepData_PeerAssessment1"
+```
+
+```
+##  [1] "activity.csv"      "activity.zip"      "doc"              
+##  [4] "Hist1.png"         "instructions_fig"  "PA1_template.html"
+##  [7] "PA1_template.md"   "PA1_template.pdf"  "PA1_template.Rmd" 
+## [10] "README.html"       "README.md"
+```
 
 ```r
 da<-read.csv("activity.csv")
@@ -63,36 +73,11 @@ summary(with(da, tapply(steps, date, sum)))
 
 
 ```r
+par(mfrow=c(1,1))
 y<-with(da, tapply(steps, date, mean))
 x<-with(da, tapply(date, date, max))
 x<-as.POSIXlt(names(x))
-plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps",na.rm=T)
-```
-
-```
-## Warning in plot.window(...): "na.rm" is not a graphical parameter
-```
-
-```
-## Warning in plot.xy(xy, type, ...): "na.rm" is not a graphical parameter
-```
-
-```
-## Warning in axis(side, at = z, labels = labels, ...): "na.rm" is not a
-## graphical parameter
-```
-
-```
-## Warning in axis(side = side, at = at, labels = labels, ...): "na.rm" is
-## not a graphical parameter
-```
-
-```
-## Warning in box(...): "na.rm" is not a graphical parameter
-```
-
-```
-## Warning in title(...): "na.rm" is not a graphical parameter
+plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps")
 ```
 
 ![](PA1_template_files/figure-html/serie plot-1.png) 
@@ -101,15 +86,8 @@ plot(x,y,main="Daily Activity Pattern",type="l",xlab="date",ylab="steps",na.rm=T
 
 
 ```r
-max(da$steps,na.rm=T)
-```
-
-```
-## [1] 806
-```
-
-```r
-da[da$steps==806 && !is.na(da$steps),]
+m<-max(da$steps,na.rm=T)
+da[da$steps==m && !is.na(da$steps),]
 ```
 
 ```
@@ -123,6 +101,19 @@ da[da$steps==806 && !is.na(da$steps),]
 Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+The total number of missing values in the dataset is:
+
+
+```r
+length(da[is.na(da$steps),1])+
+length(da[is.na(da$date),1])+
+length(da[is.na(da$interval),1])
+```
+
+```
+## [1] 2304
+```
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
@@ -144,7 +135,22 @@ For that, we do:
 * Extract the week's days.
 
 ```r
-wd<-weekdays(da$date)
+da<-cbind(da,weekdays(da$date))
+colnames(da)<-c("steps","date","interval","weekday")
+y1<-with(da, tapply(steps[da$weekday %in% c("sábado","domingo")], date[da$weekday %in% c("sábado","domingo")], mean))
+x1<-with(da, tapply(date[da$weekday %in% c("sábado","domingo")], date[da$weekday %in% c("sábado","domingo")], max))
+x1<-as.POSIXlt(names(x1))
+
+y2<-with(da, tapply(steps[!da$weekday %in% c("sábado","domingo")], date[!da$weekday %in% c("sábado","domingo")], mean))
+x2<-with(da, tapply(date[!da$weekday %in% c("sábado","domingo")], date[!da$weekday %in% c("sábado","domingo")], max))
+x2<-as.POSIXlt(names(x2))
+
+par(mfrow=c(1,2))
+plot(x1,y1,main="Weekend Activity Pattern",type="l",xlab="date",ylab="steps")
+plot(x2,y2,main="Week Activity Pattern",type="l",xlab="date",ylab="steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
+
+There is no difference between Weekend and day of week Activity Pattern.
 
